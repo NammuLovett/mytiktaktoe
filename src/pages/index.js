@@ -1,13 +1,35 @@
 import { Inter } from 'next/font/google';
 import { useState } from 'react';
-import { TURNS } from '@/constant';
 import Square from '@/components/Square';
+import confetti from 'canvas-confetti';
+import { TURNS, WINNER_COMBOS } from '@/constant';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [turn, setTurn] = useState(TURNS.X);
+  const [winner, setWinner] = useState(null);
+
+  const checkEndGame = () => {
+    {
+      return newBoard.every((square) => square !== null);
+    }
+  };
+
+  const checkWinner = (boardToCheck) => {
+    for (const combo of WINNER_COMBOS) {
+      const [a, b, c] = combo;
+      if (
+        boardToCheck[a] &&
+        boardToCheck[a] === boardToCheck[b] &&
+        boardToCheck[a] === boardToCheck[c]
+      ) {
+        return boardToCheck[a];
+      }
+    }
+    return null;
+  };
 
   const updateBoard = (index) => {
     if (board[index]) return;
@@ -15,6 +37,19 @@ export default function Home() {
     newBoard[index] = turn;
     setBoard(newBoard);
     setTurn(turn === TURNS.X ? TURNS.O : TURNS.X);
+    const winner = checkWinner(newBoard);
+    if (winner) {
+      confetti();
+      setWinner(winner);
+    } else {
+      console.log('No hay ganador');
+    }
+  };
+
+  const resetBoard = () => {
+    setBoard(Array(9).fill(null));
+    setTurn(TURNS.X);
+    setWinner(null);
   };
 
   return (
@@ -35,7 +70,10 @@ export default function Home() {
         <div className='px-4 py-2 bg-indigo-600'>{TURNS.O}</div>
         <div className='px-4 py-2 bg-indigo-600'>{TURNS.X}</div>
       </div>
-      <button className='inline-flex items-center px-4 py-2 mt-8 font-bold text-indigo-800 bg-indigo-300 rounded hover:bg-indigo-400'>
+      <button
+        onClick={resetBoard}
+        className='inline-flex items-center px-4 py-2 mt-8 font-bold text-indigo-800 bg-indigo-300 rounded hover:bg-indigo-400'
+      >
         <span>Reset</span>
       </button>
       <footer className='mt-8'>
