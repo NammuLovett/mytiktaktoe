@@ -1,11 +1,11 @@
-const Square = ({ children, index }) => {
+const Square = ({ children, index, updateBoard }) => {
   const handleClick = () => {
-    console.log(index);
+    updateBoard(index);
   };
   return (
     <div
       onClick={handleClick}
-      className='w-16 h-16 border-2 bg-indigo-600 flex justify-center items-center text-indigo-200 text-xl cursor-pointer font-bold'
+      className='flex items-center justify-center w-16 h-16 text-xl font-bold text-indigo-200 bg-indigo-600 border-2 cursor-pointer'
     >
       {children}
     </div>
