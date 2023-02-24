@@ -10,11 +10,19 @@ export default function Home() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [turn, setTurn] = useState(TURNS.X);
   const [winner, setWinner] = useState(null);
+  const WinnerModal = ({ winner }) => {
+    if (winner == null) return null;
+    return (
+      <div className='p-4 mt-6 bg-indigo-800 rounded-lg'>
+        <p className='text-2xl text-indigo-200'>
+          {winner === false ? "It's a tie" : `${winner} wins`}
+        </p>
+      </div>
+    );
+  };
 
-  const checkEndGame = () => {
-    {
-      return newBoard.every((square) => square !== null);
-    }
+  const checkEndGame = (newBoard) => {
+    return newBoard.every((square) => square !== null);
   };
 
   const checkWinner = (boardToCheck) => {
@@ -32,17 +40,17 @@ export default function Home() {
   };
 
   const updateBoard = (index) => {
-    if (board[index]) return;
+    if (board[index] || winner !== null) return; // Agregar la condición aquí
     const newBoard = [...board];
     newBoard[index] = turn;
     setBoard(newBoard);
     setTurn(turn === TURNS.X ? TURNS.O : TURNS.X);
-    const winner = checkWinner(newBoard);
-    if (winner) {
+    const newWinner = checkWinner(newBoard); // Cambiar el nombre de la variable
+    if (newWinner) {
       confetti();
-      setWinner(winner);
-    } else {
-      console.log('No hay ganador');
+      setWinner(newWinner); // Usar la nueva variable
+    } else if (checkEndGame(newBoard)) {
+      setWinner(false);
     }
   };
 
@@ -70,6 +78,7 @@ export default function Home() {
         <div className='px-4 py-2 bg-indigo-600'>{TURNS.O}</div>
         <div className='px-4 py-2 bg-indigo-600'>{TURNS.X}</div>
       </div>
+      {winner !== null && <WinnerModal winner={winner} />}
       <button
         onClick={resetBoard}
         className='inline-flex items-center px-4 py-2 mt-8 font-bold text-indigo-800 bg-indigo-300 rounded hover:bg-indigo-400'
